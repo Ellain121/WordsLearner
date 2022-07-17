@@ -41,6 +41,7 @@ class MakeWord : public Training
         QLabel*                 mTranslationLabel;
         QLabel*                 mWordLabel;
         QPushButton*            mBackButton;
+        QPushButton*            mSkipButton;
           
         std::vector<LetterButton*>  mWordButtons;
 

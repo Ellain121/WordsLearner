@@ -18,14 +18,14 @@ DatabaseManager::DatabaseManager()
 : mDBName(DATABASE_NAME)
 , mTableName(MAIN_TABLE_NAME)
 {
-    mDBConnection = QSqlDatabase::addDatabase("QSQLITE");
+    mDBConnection = QSqlDatabase::addDatabase("QSQLITE", "connection_1");
     mDBConnection.setDatabaseName(DATABASE_NAME);
     if (!mDBConnection.open())
     {
         qDebug() << "Cannot open database!";
     }
 
-    QSqlQuery query;
+    QSqlQuery query(mDBConnection);
     QString createTableCmd = "CREATE TABLE IF NOT EXISTS " MAIN_TABLE_NAME " ("
             "Word VARCHAR(100), "
             "Translation TEXT, "
@@ -44,7 +44,8 @@ DatabaseManager::DatabaseManager()
 DatabaseManager::~DatabaseManager()
 {
     mDBConnection.close();
-    QSqlDatabase::removeDatabase(DATABASE_NAME);
+    mDBConnection = QSqlDatabase();
+    QSqlDatabase::removeDatabase("connection_1");
 }
 
 void DatabaseManager::writeChanges(const std::vector<Word>& words)
@@ -149,6 +150,26 @@ void func(int trainStatus)
     assert(allWordsList.size() > 120);
     RandomEngine rng;
     std::random_shuffle(allWords.begin(), allWords.end(), rng);
+}
+
+int DatabaseManager::countWords() const
+{
+    QSqlQuery statement("select count(1) from " MAIN_TABLE_NAME ";", mDBConnection);
+    statement.next();
+    int cnt = statement.value(statement.record().indexOf("count(1)")).toString().toInt();
+
+    return cnt;
+}
+
+int DatabaseManager::countFullyLearnedWords() const
+{
+    int statusAll = TrainingType::All;
+    QSqlQuery statement(QString("select count(1) from ") + MAIN_TABLE_NAME 
+                                + QString(" where Status =") + QString::number(statusAll) + ";", mDBConnection);
+    statement.next();
+    int cnt = statement.value(statement.record().indexOf("count(1)")).toString().toInt();
+
+    return cnt;
 }
 
 const std::string& DatabaseManager::getDBName() const

@@ -4,6 +4,7 @@
 #include "Utility.hpp"
 #include "DatabaseManager.hpp"
 #include "Training.hpp"
+#include "StatisticsWidget.hpp"
 
 #include <QMainWindow>
 #include <QVBoxLayout>
@@ -21,6 +22,7 @@ class MainWindow : public QMainWindow
         {
             std::vector<bool>       trainsDone;
             std::vector<Training*>  trains;
+            int                     indx;
         };
 
     public:
@@ -29,6 +31,10 @@ class MainWindow : public QMainWindow
     private:
         void        setupCoreWidgets();
         void        setupCoreWidgetsConnections();
+        void        updateButtonsText();
+    
+    protected:
+        virtual void    closeEvent(QCloseEvent *event);
 
     private slots:
         void        initInitialTraining();
@@ -48,14 +54,15 @@ class MainWindow : public QMainWindow
         QWidget*            mMainWidget;
         QStackedWidget*     mMainStackedWidget;
     
-        QVBoxLayout*    mMainVBoxLayout;
-        QPushButton*    mRepetitionButton;
-        QPushButton*    mInitialTrainingButton;
-        QPushButton*    mMakeWordButton;
-        QPushButton*    mChooseWordButton;
-        QPushButton*    mChooseTranslationButton;
-        QPushButton*    mRainWordButton;
-        QPushButton*    mDictionaryButton;
+        QVBoxLayout*        mMainVBoxLayout;
+        StatisticsWidget*   mStatisticsWidget;
+        QPushButton*        mRepetitionButton;
+        QPushButton*        mInitialTrainingButton;
+        QPushButton*        mMakeWordButton;
+        QPushButton*        mChooseWordButton;
+        QPushButton*        mChooseTranslationButton;
+        QPushButton*        mRainWordButton;
+        QPushButton*        mDictionaryButton;
 
         MultipleTrainingVars    mMultiple;
 };

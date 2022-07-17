@@ -20,12 +20,41 @@ enum TrainingType
 
     Repetition_Train = 1000,
     WordsWelcome_Train = 1001,
+
+    All = 31,
 };
+
+// enum TrainingType
+// {
+//     Initial_Train_1         = 0,
+//     Initial_Train_2         = 1,
+//     Initial_Train_3         = 2,
+//     Initial_Train_4         = 3,
+//     Initial_Train       = (0b1 << Initial_Train_1) | (0b1 << Initial_Train_2) | (0b1 << Initial_Train_3) | (0b1 << Initial_Train_4),
+
+//     MakeWord_Train          = 4,
+//     ChooseWord_Train        = 5,
+//     ChooseTranslation_Train = 6,
+//     RainWord_Train          = 7,
+
+//     All                 = Initial_Train | (0b1 << MakeWord_Train) | (0b1 << ChooseWord_Train) 
+//                                             | (0b1 << ChooseTranslation_Train) | (0b1 << RainWord_Train),
+// };
 
 int                         getTrainingStatusBit(TrainingType trainType);
 std::vector<TrainingType>   getRequiredTrainingsFromStatus(int statusBits);
 
+enum TimeInterval
+{
+    Day = 0,
+    Week = 1,
+    Month = 2,
+    Year = 3,
+};
+
 std::string getCurrentTime();
+std::string getNextTimeIntervalStartDate(TimeInterval timeInterval);
+bool compare(const QString& str1, const QString& str2);
 
 struct SimpleWord
 {

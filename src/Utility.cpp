@@ -12,8 +12,61 @@ std::string getCurrentTime()
     return cTime;
 }
 
+// returns true if date1 >= date2
+bool compare(const QString& date1, const QString& date2)
+{
+    // yy-mm-dd-hh
+    // 01-34-67-9A
+    int i = 0;
+    while (i < 11 && date1[i] == date2[i])
+    {
+        i++;
+    }
+    return i >= 11 ? true : (date1[i] > date2[i]);
+}
+
+std::string getNextTimeIntervalStartDate(TimeInterval timeInterval)
+{
+    // yy-mm-dd-hh
+    // 01-34-67-9A
+    std::time_t t = std::time(0);
+    std::tm* now = std::localtime(&t);
+    if (timeInterval == TimeInterval::Day)
+    {
+        now->tm_mday++;
+        now->tm_hour = 4;
+    }
+    else if (timeInterval == TimeInterval::Week)
+    {
+        int wDay = now->tm_wday;
+        int day_untill_end = 6 - wDay + 1;
+        now->tm_mday += day_untill_end;
+        now->tm_hour = 4;
+    }
+    else if (timeInterval == TimeInterval::Month)
+    {
+        now->tm_mon++;
+        now->tm_mday = 1;
+        now->tm_hour = 4;
+    }
+    else if (timeInterval == TimeInterval::Year)
+    {
+        now->tm_year++;
+        now->tm_mon = 0;
+        now->tm_mday = 1;
+        now->tm_hour = 4;
+    }
+    std::mktime(now);
+    std::string cTime = std::to_string(now->tm_year - 100) + ":" + std::to_string(now->tm_mon + 1) + ":"
+            + std::to_string(now->tm_mday) + ":"  + std::to_string(now->tm_hour);
+
+    return cTime;
+}
+
+
 int getTrainingStatusBit(TrainingType trainType)
 {
+    // return (int)trainType;
     if (trainType == TrainingType::Initial_Train) return 0;
     if (trainType == TrainingType::MakeWord_Train) return 1;
     if (trainType == TrainingType::ChooseWord_Train) return 2;

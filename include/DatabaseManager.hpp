@@ -27,6 +27,9 @@ class DatabaseManager : private NonCopyable
         QSqlDatabase&               getDBConnection();
         const std::string&          getDBName() const;
         const std::string&          getTableName() const;
+        int                         countFullyLearnedWords() const;
+        int                         countWords() const;
+        
     
     private:
         QSqlDatabase           mDBConnection;

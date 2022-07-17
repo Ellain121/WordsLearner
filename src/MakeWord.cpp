@@ -21,8 +21,13 @@ void MakeWord::setupCoreWidgets()
     mTranslationLabel = new QLabel;
     mWordLabel = new QLabel;
     mBackButton = new QPushButton("Back");
+    mSkipButton = new QPushButton("I don't know");
 
     mBackButton->setFixedSize(WINDOW_WIDTH * 0.12 , WINDOW_HEIGHT * 0.08);
+    mSkipButton->setFixedSize(WINDOW_WIDTH * 0.12 , WINDOW_HEIGHT * 0.08);
+
+    mBackButton->setShortcut(QKeySequence(Qt::Key_Escape));
+    mSkipButton->setShortcut(QKeySequence(Qt::Key_Space));
     
     setupWordAndTranslation();
 
@@ -34,6 +39,7 @@ void MakeWord::setupCoreWidgets()
     mMainVBoxLayout->addStretch(1);
     mMainVBoxLayout->addLayout(mLettersHBoxLayout);
     mMainVBoxLayout->addStretch(1);
+    mMainVBoxLayout->addWidget(mSkipButton, 0, Qt::AlignCenter);
 
     setLayout(mMainVBoxLayout);
 }

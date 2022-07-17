@@ -17,6 +17,13 @@ DictionaryState::DictionaryState(DatabaseManager* dbManager, QWidget* parent)
     setupCoreWidgetsConnections();
 }
 
+DictionaryState::~DictionaryState()
+{
+    delete mTableView;
+    delete mTableSortFilter;
+    delete mTableModel;
+}
+
 void DictionaryState::setupCoreWidgets()
 {
     mMainVBoxLayout = new QVBoxLayout;
@@ -24,6 +31,8 @@ void DictionaryState::setupCoreWidgets()
     mSearchLineEdit = new QLineEdit;
     mWordAddButton = new QPushButton("ADD");
     mReturnButton = new QPushButton("Return");
+
+    mReturnButton->setShortcut(QKeySequence(Qt::Key_Escape));
 
     mWordAddButton->setShortcut(QKeySequence(Qt::Key_Return));
     mWordAddButton->setFixedSize(WINDOW_WIDTH * 0.1, WINDOW_HEIGHT * 0.1);

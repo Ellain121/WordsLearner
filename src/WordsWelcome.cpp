@@ -30,6 +30,10 @@ void WordsWelcome::setupCoreWidgets()
     mSkipButton->setFixedSize(WINDOW_WIDTH * 0.17 , WINDOW_HEIGHT * 0.11);
     mNextButton->setFixedSize(WINDOW_WIDTH * 0.17 , WINDOW_HEIGHT * 0.11);
 
+    mBackButton->setShortcut(QKeySequence(Qt::Key_Escape));
+    mSkipButton->setShortcut(QKeySequence(Qt::Key_Space));
+    mNextButton->setShortcut(QKeySequence(Qt::Key_Return));
+
     mMainVBoxLayout->addWidget(mBackButton, 0, Qt::AlignLeft);
     mMainVBoxLayout->addStretch(1);
     mMainVBoxLayout->addWidget(mWord, 0, Qt::AlignCenter);

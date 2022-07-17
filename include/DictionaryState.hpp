@@ -20,6 +20,7 @@ class DictionaryState : public QWidget, private NonCopyable
 
     public:
         DictionaryState(DatabaseManager* dbManager, QWidget* parent = 0);
+        ~DictionaryState();
 
     private:
         void        setupCoreWidgets();

@@ -22,8 +22,11 @@ void ChooseTranslation::setupCoreWidgets()
     mButtonsHBoxLayout = new QHBoxLayout;
     mWord = new QLabel;
     mBackButton = new QPushButton("Back");
-    mSkipButton = new QPushButton("Skip");
+    mSkipButton = new QPushButton("I don't know");
     mNextButton = new QPushButton("Next");
+
+    mBackButton->setShortcut(QKeySequence(Qt::Key_Escape));
+    mSkipButton->setShortcut(QKeySequence(Qt::Key_Space));
 
     // mWord->setStyleSheet("font-weight: bold; color: green");
     mWord->setStatusTip("color: white");

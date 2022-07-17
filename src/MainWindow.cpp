@@ -28,31 +28,28 @@ void MainWindow::setupCoreWidgets()
 {
     mMainWidget = new QWidget;
     mMainVBoxLayout = new QVBoxLayout;
+    mStatisticsWidget = new StatisticsWidget(&mDBManager);
+    mMainStackedWidget = new QStackedWidget;
 
+    mMainVBoxLayout->addWidget(mStatisticsWidget, Qt::AlignCenter);
     mMainVBoxLayout->addStretch(1);
-    auto wordsAmountForTrains = mDBManager.getWordsAmountForEachTraining();
-    int repetitionN = wordsAmountForTrains[TrainingType::Repetition_Train];
-    int initialN = wordsAmountForTrains[TrainingType::Initial_Train];
-    int makeWordN = wordsAmountForTrains[TrainingType::MakeWord_Train];
-    int chooseWordN = wordsAmountForTrains[TrainingType::ChooseWord_Train];
-    int chooseTranslationN = wordsAmountForTrains[TrainingType::ChooseTranslation_Train];
-    int rainWordN = wordsAmountForTrains[TrainingType::RainWord_Train];
 
-    mRepetitionButton = new QPushButton(QString("Repetition (") + QString::number(repetitionN) + QString(")"));
-    mInitialTrainingButton = new QPushButton(QString("Initial Training (") + QString::number(initialN) + QString(")"));
-    mMakeWordButton = new QPushButton(QString("Make Word (") + QString::number(makeWordN) + QString(")"));
-    mChooseWordButton = new QPushButton(QString("Choose Word (") + QString::number(chooseWordN) + QString(")"));
-    mChooseTranslationButton = new QPushButton(QString("Choose Translation (") + QString::number(chooseTranslationN) + QString(")"));
-    mRainWordButton = new QPushButton(QString("Words Rain (") + QString::number(rainWordN) + QString(")"));
-    mDictionaryButton = new QPushButton("Dictionary");
+    mRepetitionButton = new QPushButton;
+    mInitialTrainingButton = new QPushButton;
+    mMakeWordButton = new QPushButton;
+    mChooseWordButton = new QPushButton;
+    mChooseTranslationButton = new QPushButton;
+    mRainWordButton = new QPushButton;
+    mDictionaryButton = new QPushButton;
+    updateButtonsText();
 
-    mRepetitionButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
-    mInitialTrainingButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
-    mMakeWordButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
-    mChooseWordButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
-    mChooseTranslationButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
-    mRainWordButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
-    mDictionaryButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT);
+    mRepetitionButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.09 * WINDOW_HEIGHT);
+    mInitialTrainingButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.09 * WINDOW_HEIGHT);
+    mMakeWordButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.09 * WINDOW_HEIGHT);
+    mChooseWordButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.09 * WINDOW_HEIGHT);
+    mChooseTranslationButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.09 * WINDOW_HEIGHT);
+    mRainWordButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.09 * WINDOW_HEIGHT);
+    mDictionaryButton->setFixedSize(0.8 * WINDOW_WIDTH, 0.09 * WINDOW_HEIGHT);
 
     mMainVBoxLayout->setAlignment(Qt::AlignCenter);
     mMainVBoxLayout->addWidget(mRepetitionButton, 0,   Qt::AlignCenter);
@@ -63,7 +60,9 @@ void MainWindow::setupCoreWidgets()
     mMainVBoxLayout->addWidget(mRainWordButton, 0, Qt::AlignCenter);
     mMainVBoxLayout->addWidget(mDictionaryButton, 0, Qt::AlignCenter);
     mMainWidget->setLayout(mMainVBoxLayout);
-    setCentralWidget(mMainWidget);
+    mMainStackedWidget->addWidget(mMainWidget);
+    
+    setCentralWidget(mMainStackedWidget);
 }
 
 void MainWindow::setupCoreWidgetsConnections()
@@ -76,43 +75,60 @@ void MainWindow::setupCoreWidgetsConnections()
     connect(mDictionaryButton, &QPushButton::clicked, this, &MainWindow::initDictionaryState);
 }
 
+void MainWindow::updateButtonsText()
+{
+    auto wordsAmountForTrains = mDBManager.getWordsAmountForEachTraining();
+    int repetitionN = wordsAmountForTrains[TrainingType::Repetition_Train];
+    int initialN = wordsAmountForTrains[TrainingType::Initial_Train];
+    int makeWordN = wordsAmountForTrains[TrainingType::MakeWord_Train];
+    int chooseWordN = wordsAmountForTrains[TrainingType::ChooseWord_Train];
+    int chooseTranslationN = wordsAmountForTrains[TrainingType::ChooseTranslation_Train];
+    int rainWordN = wordsAmountForTrains[TrainingType::RainWord_Train];
+
+    mRepetitionButton->setText(QString("Repetition (") + QString::number(repetitionN) + QString(")"));
+    mInitialTrainingButton->setText(QString("Initial Training (") + QString::number(initialN) + QString(")"));
+    mMakeWordButton->setText(QString("Make Word (") + QString::number(makeWordN) + QString(")"));
+    mChooseWordButton->setText(QString("Choose Word (") + QString::number(chooseWordN) + QString(")"));
+    mChooseTranslationButton->setText(QString("Choose Translation (") + QString::number(chooseTranslationN) + QString(")"));
+    mRainWordButton->setText(QString("Words Rain (") + QString::number(rainWordN) + QString(")"));
+    mDictionaryButton->setText("Dictionary");
+}
+
 void MainWindow::initInitialTraining()
 {
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::Initial_Train);
 
     WordsWelcome* wordsWelcome = new WordsWelcome(mCurrentWordsToLearn);
-    MakeWord* makeWord = new MakeWord(mCurrentWordsToLearn);
     ChooseWord* chooseWord = new ChooseWord(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::ChooseWord_Train));
     ChooseTranslation* chooseTranslation = new ChooseTranslation(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::ChooseTranslation_Train));
+    MakeWord* makeWord = new MakeWord(mCurrentWordsToLearn);
 
     mMultiple.trains.resize(4);
     mMultiple.trains[0] = wordsWelcome;
-    mMultiple.trains[1] = makeWord;
-    mMultiple.trains[2] = chooseWord;
-    mMultiple.trains[3] = chooseTranslation;
+    mMultiple.trains[1] = chooseWord;
+    mMultiple.trains[2] = chooseTranslation;
+    mMultiple.trains[3] = makeWord;
 
-
-    mMainStackedWidget = new QStackedWidget;
-    mMainStackedWidget->addWidget(wordsWelcome);
-    mMainStackedWidget->addWidget(makeWord);
-    mMainStackedWidget->addWidget(chooseWord);
-    mMainStackedWidget->addWidget(chooseTranslation);
-
+    for (auto& train : mMultiple.trains)
+    {
+        mMainStackedWidget->addWidget(train);
+    }
 
     mMultiple.trainsDone.clear();
     mMultiple.trainsDone = std::vector<bool>(4, false);
+    mMultiple.indx = 0;
 
     for (int i = 0; i < mMultiple.trains.size(); ++i)
     {
         auto train = mMultiple.trains[i];
         connect(train, &Training::fullCircle, [&](){
-            int indx = mMainStackedWidget->currentIndex();
-            int size = mMainStackedWidget->count();
+            int& indx = mMultiple.indx;
+            int size = mMultiple.trains.size();
             do {
                 indx = (indx + 1) % size;
             } while (mMultiple.trainsDone[indx] != false);
 
-            mMainStackedWidget->setCurrentIndex(indx);
+            mMainStackedWidget->setCurrentIndex(indx + 1);
         });
 
         connect(train, &Training::trainingDone, [&, i](){
@@ -132,19 +148,19 @@ void MainWindow::initInitialTraining()
             }
             else
             {
-                int indx = mMainStackedWidget->currentIndex();
-                int size = mMainStackedWidget->count();
+                int& indx = mMultiple.indx;
+                int size = mMultiple.trains.size();
                 do {
                     indx = (indx + 1) % size;
                 } while (mMultiple.trainsDone[indx] != false);
-                mMainStackedWidget->setCurrentIndex(indx);
+                mMainStackedWidget->setCurrentIndex(indx + 1);
             }
         });
 
         connect(train, &Training::backToMenu, this, &MainWindow::activateMenu);
     }
 
-    setCentralWidget(mMainStackedWidget);
+    mMainStackedWidget->setCurrentIndex(1);
 }
 
 void MainWindow::initMakeWordTraining()
@@ -160,9 +176,8 @@ void MainWindow::initMakeWordTraining()
 
     connect(makeWord, &Training::backToMenu, this, &MainWindow::activateMenu);
 
-    mMainStackedWidget = new QStackedWidget;
     mMainStackedWidget->addWidget(makeWord);
-    setCentralWidget(mMainStackedWidget);
+    mMainStackedWidget->setCurrentIndex(1);
 }
 
 void MainWindow::initChooseWordTraining()
@@ -176,9 +191,8 @@ void MainWindow::initChooseWordTraining()
     });
     connect(chooseWord, &Training::backToMenu, this, &MainWindow::activateMenu);
 
-    mMainStackedWidget = new QStackedWidget;
     mMainStackedWidget->addWidget(chooseWord);
-    setCentralWidget(mMainStackedWidget);
+    mMainStackedWidget->setCurrentIndex(1);
 }
 
 void MainWindow::initChooseTranslation()
@@ -192,9 +206,8 @@ void MainWindow::initChooseTranslation()
     });
     connect(chooseTranslation, &Training::backToMenu, this, &MainWindow::activateMenu);
 
-    mMainStackedWidget = new QStackedWidget;
     mMainStackedWidget->addWidget(chooseTranslation);
-    setCentralWidget(mMainStackedWidget);
+    mMainStackedWidget->setCurrentIndex(1);
 }
 
 void MainWindow::initRainWord()
@@ -208,9 +221,8 @@ void MainWindow::initRainWord()
     });
     connect(rainWord, &Training::backToMenu, this, &MainWindow::activateMenu);
 
-    mMainStackedWidget = new QStackedWidget;
     mMainStackedWidget->addWidget(rainWord);
-    setCentralWidget(mMainStackedWidget);
+    mMainStackedWidget->setCurrentIndex(1);
 }
 
 void MainWindow::initDictionaryState()
@@ -219,22 +231,43 @@ void MainWindow::initDictionaryState()
 
     connect(dictState, &DictionaryState::backToMenu, this, &MainWindow::activateMenu);
 
-    mMainStackedWidget = new QStackedWidget;
     mMainStackedWidget->addWidget(dictState);
-    setCentralWidget(mMainStackedWidget);
+    mMainStackedWidget->setCurrentIndex(1);
 }
 
 void MainWindow::activeTrainingDone(TrainingType trainType)
 {
+    // CRUTCH LMAO
+    int cnt = 0;
+    for (auto& mCWTL : mCurrentWordsToLearn)
+    {
+        cnt += mCWTL.status == TrainingType::All;
+    }
+
     mDBManager.writeChanges(mCurrentWordsToLearn);
     activateMenu();
+
+    mStatisticsWidget->updateStatistics(cnt);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    delete mMainStackedWidget;
+    QWidget::closeEvent(event);
 }
 
 void MainWindow::activateMenu()
 {
     mCurrentWordsToLearn.clear();
-    setupCoreWidgets();
-    setupCoreWidgetsConnections();
-    // delete mMainStackedWidget;
-    // mMainStackedWidget = new QStackedWidget;
+    // mMultiple.trains.clear();
+
+    while (mMainStackedWidget->count() > 1)
+    {
+        QWidget* widget = mMainStackedWidget->widget(1);
+        mMainStackedWidget->removeWidget(widget);
+        widget->deleteLater();
+    }
+
+    updateButtonsText();
+    mMainStackedWidget->setCurrentIndex(0);
 }
