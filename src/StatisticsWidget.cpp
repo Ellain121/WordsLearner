@@ -20,9 +20,10 @@ void StatisticsWidget::setupWidgets()
     int fullyLearnedCnt = mDBManager->countFullyLearnedWords();
 
     mMainLayout = new QGridLayout;
-    mTotalWordsLabel = new QLabel(QString("Total words: ") + QString::number(wordsCnt));
-    mFullyLearnedWordsLabel = new QLabel(QString("Learned words: ") + QString::number(fullyLearnedCnt));
-    mUnlearnedWordsLabel = new QLabel(QString("Unlearned words: ") + QString::number(wordsCnt - fullyLearnedCnt));
+    mTotalWordsLabel = new QLabel;
+    mFullyLearnedWordsLabel = new QLabel;
+    mUnlearnedWordsLabel = new QLabel;
+    updateLabels();
 
     mDailyPrgBar = new ProgressBar("Daily goal: ", 25, 10);
     mWeeklyPrgBar = new ProgressBar("Weekly goal: ", 35, 70);
@@ -44,13 +45,22 @@ void StatisticsWidget::setupWidgets()
     setLayout(mMainLayout);
 }
 
+void StatisticsWidget::updateLabels()
+{
+    int wordsCnt = mDBManager->countWords();
+    int fullyLearnedCnt = mDBManager->countFullyLearnedWords();
+    mTotalWordsLabel->setText(QString("Total words: ") + QString::number(wordsCnt));
+    mFullyLearnedWordsLabel->setText(QString("Learned words: ") + QString::number(fullyLearnedCnt));
+    mUnlearnedWordsLabel->setText(QString("Unlearned words: ") + QString::number(wordsCnt - fullyLearnedCnt));
+}
+
 void StatisticsWidget::setupWidgetsConnections()
 {
-
 }
 
 void StatisticsWidget::wordUnlearned(QString learnedDate)
 {
+    updateLabels();
     QString previousDayDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Day));
     QString previousWeekDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Week));
     QString previousMonthDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Month));
@@ -66,6 +76,7 @@ void StatisticsWidget::wordUnlearned(QString learnedDate)
 
 void StatisticsWidget::updateStatistics(int newlyLearnedWordsCnt)
 {
+    updateLabels();
     mDailyPrgBar->addValue(newlyLearnedWordsCnt);
     mWeeklyPrgBar->addValue(newlyLearnedWordsCnt);
     mMonthlyPrgBar->addValue(newlyLearnedWordsCnt);

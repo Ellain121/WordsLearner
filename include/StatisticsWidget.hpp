@@ -23,6 +23,7 @@ class StatisticsWidget : public QWidget
     private:
         void    setupWidgets();
         void    setupWidgetsConnections();
+        void    updateLabels();
     
     public slots:
         void    wordUnlearned(QString learnedDate);
