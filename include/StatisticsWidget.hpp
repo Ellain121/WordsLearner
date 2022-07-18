@@ -23,10 +23,12 @@ class StatisticsWidget : public QWidget
     private:
         void    setupWidgets();
         void    setupWidgetsConnections();
+        void    setupLabels();
         void    updateLabels();
     
     public slots:
-        void    wordUnlearned(QString learnedDate);
+        void    wordDeletedOrReset(QString learnedDate, bool isFullyLearned, bool isDeleted);
+        void    newWordAdded();
     
     
     private:
@@ -40,6 +42,8 @@ class StatisticsWidget : public QWidget
         ProgressBar*                mMonthlyPrgBar;
         ProgressBar*                mYearlyPrgBar;
         ProgressBarContainer*       mPrgBarCont;
+        int                         mTotalWordsCnt;
+        int                         mFullyLearnedWordsCnt;
 
 };
 

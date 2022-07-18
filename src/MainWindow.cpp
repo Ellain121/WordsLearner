@@ -230,7 +230,8 @@ void MainWindow::initDictionaryState()
     DictionaryState* dictState = new DictionaryState(&mDBManager);
 
     connect(dictState, &DictionaryState::backToMenu, this, &MainWindow::activateMenu);
-    connect(dictState, &DictionaryState::fullyLearnedWordEliminated, mStatisticsWidget, &StatisticsWidget::wordUnlearned);
+    connect(dictState, &DictionaryState::wordDeletedOrReset, mStatisticsWidget, &StatisticsWidget::wordDeletedOrReset);
+    connect(dictState, &DictionaryState::newWord, mStatisticsWidget, &StatisticsWidget::newWordAdded);
 
     mMainStackedWidget->addWidget(dictState);
     mMainStackedWidget->setCurrentIndex(1);

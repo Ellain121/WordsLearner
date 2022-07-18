@@ -4,6 +4,8 @@
 StatisticsWidget::StatisticsWidget(DatabaseManager* dbManager, QWidget* parent)
 : QWidget(parent)
 , mDBManager(dbManager)
+, mTotalWordsCnt(0)
+, mFullyLearnedWordsCnt(0)
 {
     setupWidgets();
     setupWidgetsConnections();
@@ -16,14 +18,11 @@ StatisticsWidget::~StatisticsWidget()
 
 void StatisticsWidget::setupWidgets()
 {
-    int wordsCnt = mDBManager->countWords();
-    int fullyLearnedCnt = mDBManager->countFullyLearnedWords();
-
     mMainLayout = new QGridLayout;
     mTotalWordsLabel = new QLabel;
     mFullyLearnedWordsLabel = new QLabel;
     mUnlearnedWordsLabel = new QLabel;
-    updateLabels();
+    setupLabels();
 
     mDailyPrgBar = new ProgressBar("Daily goal: ", 25, 10);
     mWeeklyPrgBar = new ProgressBar("Weekly goal: ", 35, 70);
@@ -45,22 +44,35 @@ void StatisticsWidget::setupWidgets()
     setLayout(mMainLayout);
 }
 
+void StatisticsWidget::setupLabels()
+{
+    mTotalWordsCnt = mDBManager->countWords();
+    mFullyLearnedWordsCnt = mDBManager->countFullyLearnedWords();
+    
+    mTotalWordsLabel = new QLabel(QString("Total words: ") + QString::number(mTotalWordsCnt));
+    mFullyLearnedWordsLabel = new QLabel(QString("Learned words: ") + QString::number(mFullyLearnedWordsCnt));
+    mUnlearnedWordsLabel = new QLabel(QString("Unlearned words: ") + QString::number(mTotalWordsCnt - mFullyLearnedWordsCnt));
+}
+
 void StatisticsWidget::updateLabels()
 {
-    int wordsCnt = mDBManager->countWords();
-    int fullyLearnedCnt = mDBManager->countFullyLearnedWords();
-    mTotalWordsLabel->setText(QString("Total words: ") + QString::number(wordsCnt));
-    mFullyLearnedWordsLabel->setText(QString("Learned words: ") + QString::number(fullyLearnedCnt));
-    mUnlearnedWordsLabel->setText(QString("Unlearned words: ") + QString::number(wordsCnt - fullyLearnedCnt));
+    mTotalWordsLabel->setText(QString("Total words: ") + QString::number(mTotalWordsCnt));
+    mFullyLearnedWordsLabel->setText(QString("Learned words: ") + QString::number(mFullyLearnedWordsCnt));
+    mUnlearnedWordsLabel->setText(QString("Unlearned words: ") + QString::number(mTotalWordsCnt - mFullyLearnedWordsCnt));
 }
 
 void StatisticsWidget::setupWidgetsConnections()
 {
 }
 
-void StatisticsWidget::wordUnlearned(QString learnedDate)
+void StatisticsWidget::wordDeletedOrReset(QString learnedDate, bool isFullyLearned, bool isDeleted)
 {
+    mTotalWordsCnt -= isDeleted;
+    if (!isFullyLearned) return;
+
+    mFullyLearnedWordsCnt--;
     updateLabels();
+
     QString previousDayDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Day));
     QString previousWeekDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Week));
     QString previousMonthDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Month));
@@ -76,7 +88,9 @@ void StatisticsWidget::wordUnlearned(QString learnedDate)
 
 void StatisticsWidget::updateStatistics(int newlyLearnedWordsCnt)
 {
+    mFullyLearnedWordsCnt += newlyLearnedWordsCnt;
     updateLabels();
+
     mDailyPrgBar->addValue(newlyLearnedWordsCnt);
     mWeeklyPrgBar->addValue(newlyLearnedWordsCnt);
     mMonthlyPrgBar->addValue(newlyLearnedWordsCnt);
@@ -84,3 +98,8 @@ void StatisticsWidget::updateStatistics(int newlyLearnedWordsCnt)
     mPrgBarCont->writeChanges();
 }
 
+void StatisticsWidget::newWordAdded()
+{
+    mTotalWordsCnt++;
+    updateLabels();
+}
