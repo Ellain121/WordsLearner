@@ -25,6 +25,12 @@ void ChooseTranslation::setupCoreWidgets()
     mSkipButton = new QPushButton("I don't know");
     mNextButton = new QPushButton("Next");
 
+    mTranslationVariantsButtons.resize(5);
+    for (int i = 0; i < 5; ++i)
+    {
+        mTranslationVariantsButtons[i] = new QPushButton;
+    }
+
     mBackButton->setShortcut(QKeySequence(Qt::Key_Escape));
     mSkipButton->setShortcut(QKeySequence(Qt::Key_Space));
 
@@ -41,6 +47,10 @@ void ChooseTranslation::setupCoreWidgets()
     // mMainVBoxLayout->addWidget(mWord, 0, Qt::AlignCenter);
     mMainVBoxLayout->addWidget(mWord, 0, Qt::AlignCenter);
     mMainVBoxLayout->addStretch(1);
+    for (int i = 0; i < 5; ++i)
+    {
+        mTranslationButtonsVBoxLayout->addWidget(mTranslationVariantsButtons[i]);
+    }
     mMainVBoxLayout->addLayout(mTranslationButtonsVBoxLayout);
     mTranslationButtonsVBoxLayout->setAlignment(Qt::AlignCenter);
     mMainVBoxLayout->addStretch(1);
@@ -68,26 +78,18 @@ void ChooseTranslation::setupWordsAndTranslation()
 
 void ChooseTranslation::setupTranslationVariantsButtons()
 {
-     // delete all previou letter buttons, clear vector, clear layout, clear indices
-    mTranslationVariantsButtons.clear();
-    QLayoutItem* item;
-    while ( ( item = mTranslationButtonsVBoxLayout->takeAt( 0 ) ) != NULL )
-    {
-        // std::cout << "DELETED\n";
-        delete item->widget();
-        delete item;
-    }
-    //-----------------------------------------------------
     int rightTranslationIndx = mRandEngine.getRandom(5);
     auto rightTranslation = mWords[mWordIndx].translation;
     for (int i = 0; i < 5; ++i)
     {
-        QPushButton* pushButton;
+        QPushButton* pushButton = mTranslationVariantsButtons[i];
+        pushButton->disconnect();
         if (i == rightTranslationIndx)
         {
-            pushButton = new QPushButton(QString::fromStdString(rightTranslation));
+            // pushButton = new QPushButton(QString::fromStdString(rightTranslation));
+            pushButton->setText(QString::fromStdString(rightTranslation));
             connect(pushButton, &QPushButton::clicked, [this, pushButton](){
-                pushButton->setStyleSheet("color: limegreen");
+                pushButton->setStyleSheet("color: limegreen; font-size: 18px;");
                 QTimer::singleShot(700, this, &ChooseTranslation::nextWord);
 
             });
@@ -96,17 +98,17 @@ void ChooseTranslation::setupTranslationVariantsButtons()
         {
             assert(mSimpleWordsIndx + 1 < mSimpleWords.size());
             auto& translation = mSimpleWords[mSimpleWordsIndx++].translation;
-            pushButton = new QPushButton(QString::fromStdString(translation));
+            // pushButton = new QPushButton(QString::fromStdString(translation));
+            pushButton->setText(QString::fromStdString(translation));
             connect(pushButton, &QPushButton::clicked, [this, pushButton](){
-                pushButton->setStyleSheet("color: red");
+                pushButton->setStyleSheet("color: red; font-size: 22px;");
                 QTimer::singleShot(1000, this, &ChooseTranslation::skipWord);
 
             });
         }
+        pushButton->setStyleSheet("font-size: 20px;");
         pushButton->setShortcut(QKeySequence(i + '1'));
         pushButton->setFixedSize(WINDOW_WIDTH * 0.6 , WINDOW_HEIGHT * 0.12);
-        mTranslationVariantsButtons.push_back(pushButton);
-        mTranslationButtonsVBoxLayout->addWidget(pushButton);
     }
 }
 

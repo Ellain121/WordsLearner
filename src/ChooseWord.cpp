@@ -25,6 +25,12 @@ void ChooseWord::setupCoreWidgets()
     mSkipButton = new QPushButton("I don't know");
     mNextButton = new QPushButton("Next");
 
+    mWordVariantsButtons.resize(5);
+    for (int i = 0; i < 5; ++i)
+    {
+        mWordVariantsButtons[i] = new QPushButton;
+    }
+
     mBackButton->setShortcut(QKeySequence(Qt::Key_Escape));
     mSkipButton->setShortcut(QKeySequence(Qt::Key_Space));
 
@@ -41,6 +47,10 @@ void ChooseWord::setupCoreWidgets()
     // mMainVBoxLayout->addWidget(mWord, 0, Qt::AlignCenter);
     mMainVBoxLayout->addWidget(mTranslation, 0, Qt::AlignCenter);
     mMainVBoxLayout->addStretch(1);
+    for (int i = 0; i < 5; ++i)
+    {
+        mWordButtonsVBoxLayout->addWidget(mWordVariantsButtons[i]);
+    }
     mMainVBoxLayout->addLayout(mWordButtonsVBoxLayout);
     mWordButtonsVBoxLayout->setAlignment(Qt::AlignCenter);
     mMainVBoxLayout->addStretch(1);
@@ -68,26 +78,17 @@ void ChooseWord::setupWordsAndTranslation()
 
 void ChooseWord::setupWordVariantsButtons()
 {
-     // delete all previou letter buttons, clear vector, clear layout, clear indices
-    mWordVariantsButtons.clear();
-    QLayoutItem* item;
-    while ( ( item = mWordButtonsVBoxLayout->takeAt( 0 ) ) != NULL )
-    {
-        // std::cout << "DELETED\n";
-        delete item->widget();
-        delete item;
-    }
-    //-----------------------------------------------------
     int rightWordIndx = mRandEngine.getRandom(5);
     auto rightWord = mWords[mWordIndx].word;
     for (int i = 0; i < 5; ++i)
     {
-        QPushButton* pushButton;
+        QPushButton* pushButton = mWordVariantsButtons[i];
+        pushButton->disconnect();
         if (i == rightWordIndx)
         {
-            pushButton = new QPushButton(QString::fromStdString(rightWord));
+            pushButton->setText(QString::fromStdString(rightWord));
             connect(pushButton, &QPushButton::clicked, [this, pushButton](){
-                pushButton->setStyleSheet("color: limegreen");
+                pushButton->setStyleSheet("color: limegreen; font-size: 18px;");
                 QTimer::singleShot(700, this, &ChooseWord::nextWord);
 
             });
@@ -96,17 +97,16 @@ void ChooseWord::setupWordVariantsButtons()
         {
             assert(mSimpleWordsIndx + 1 < mSimpleWords.size());
             auto& word = mSimpleWords[mSimpleWordsIndx++].word;
-            pushButton = new QPushButton(QString::fromStdString(word));
+            pushButton->setText(QString::fromStdString(word));
             connect(pushButton, &QPushButton::clicked, [this, pushButton](){
-                pushButton->setStyleSheet("color: red");
+                pushButton->setStyleSheet("color: red; font-size: 22px;");
                 QTimer::singleShot(1000, this, &ChooseWord::skipWord);
 
             });
         }
+        pushButton->setStyleSheet("font-size: 20px;");
         pushButton->setShortcut(QKeySequence(i + '1'));
         pushButton->setFixedSize(WINDOW_WIDTH * 0.6 , WINDOW_HEIGHT * 0.12);
-        mWordVariantsButtons.push_back(pushButton);
-        mWordButtonsVBoxLayout->addWidget(pushButton);
     }
 }
 

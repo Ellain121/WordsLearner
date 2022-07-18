@@ -24,7 +24,7 @@ class Training : public QWidget
         virtual void    setupCoreWidgets() = 0;
         virtual void    setupCoreWidgetsConnections() = 0;
 
-        bool            isAllWordsLearned() const;
+        bool            isAllWordsDone() const;
 
     protected:
         bool            isTrainingDone() const;
@@ -35,6 +35,7 @@ class Training : public QWidget
     
     protected:
         std::vector<Word>&      mWords;
+        std::vector<int>        mWordsTriesCnt;
         int                     mWordIndx;
         const int               mStatusBit;
     

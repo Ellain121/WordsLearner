@@ -82,10 +82,10 @@ void RainWord::setupWordVariantsButtons()
     for (int i = 0; i < 5; ++i)
     {
         WrapButton* pushButton = mTranslationVariantsButtons[i];
+        pushButton->disconnect();
         if (i == rightTranslationIndx)
         {
             pushButton->setText(QString::fromStdString(rightTranslation));
-            pushButton->disconnect();
             connect(pushButton, &QPushButton::clicked, [this, pushButton](){
                 pushButton->setStyleSheet("color: limegreen");
                 mAnimation->stop();
@@ -98,7 +98,6 @@ void RainWord::setupWordVariantsButtons()
             assert(mSimpleWordsIndx + 1 < mSimpleWords.size());
             auto& translation = mSimpleWords[mSimpleWordsIndx++].translation;
             pushButton->setText(QString::fromStdString(translation));
-            pushButton->disconnect();
             connect(pushButton, &QPushButton::clicked, [this, pushButton](){
                 pushButton->setStyleSheet("color: red");
                 mAnimation->stop();

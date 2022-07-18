@@ -3,6 +3,7 @@
 Training::Training(std::vector<Word>& words, int statusBit, QWidget* parent)
 : QWidget(parent)
 , mWords(words)
+, mWordsTriesCnt(words.size(), 0)
 , mStatusBit(statusBit)
 , mWordIndx(0)
 , mDone(false)
@@ -18,13 +19,15 @@ void Training::nextWord()
 {
     int oldIndx = mWordIndx;
 
-    mWords[mWordIndx].status |= (1 << mStatusBit);
+    // if you it's your first or second try with specific word, set status as larned
+    if (mWordsTriesCnt[mWordIndx] < 2)
+        mWords[mWordIndx].status |= (1 << mStatusBit);
     do
     {
         mWordIndx++;
         if (mWordIndx >= mWords.size())
         {
-            if (isAllWordsLearned())
+            if (isAllWordsDone())
             {
                 emit trainingDone();
                 mDone = true;
@@ -37,11 +40,12 @@ void Training::nextWord()
                 mWordIndx = 0;
             }
         }
-    } while(mWords[mWordIndx].status & (1 << mStatusBit));
+    } while (mWords[mWordIndx].status & (1 << mStatusBit));
 }
 
 void Training::skipWord()
 {
+    mWordsTriesCnt[mWordIndx]++;
     do
     {
         mWordIndx++;
@@ -50,7 +54,7 @@ void Training::skipWord()
             mWordIndx = 0;
             emit fullCircle();
         }
-    } while(mWords[mWordIndx].status & (1 << mStatusBit));
+    } while (mWords[mWordIndx].status & (1 << mStatusBit));
 }
 
 bool Training::isTrainingDone() const
@@ -58,11 +62,14 @@ bool Training::isTrainingDone() const
     return mDone;
 }
 
-bool Training::isAllWordsLearned() const
+bool Training::isAllWordsDone() const
 {
-    for (auto& word : mWords)
+    for (int i = 0; i < mWords.size(); ++i)
     {
-        if ( !(word.status & (1 << mStatusBit)) )       
+        auto& word = mWords[i];
+        int triesCnt = mWordsTriesCnt[i];
+        // if words not learned and triesCnt < 2
+        if ( (!(word.status & (1 << mStatusBit))) && triesCnt < 2 )       
         {
             return false;
         }
