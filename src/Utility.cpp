@@ -79,6 +79,52 @@ std::string getNextTimeIntervalStartDate(TimeInterval timeInterval)
     return cTime;
 }
 
+std::string getPreviousTimeIntervalStartDate(TimeInterval timeInterval)
+{
+    // yy-mm-dd-hh
+    // 01-34-67-9A
+    std::time_t t = std::time(0);
+    std::tm* now = std::localtime(&t);
+    if (timeInterval == TimeInterval::Day)
+    {
+        now->tm_mday--;
+        now->tm_hour = 4;
+    }
+    else if (timeInterval == TimeInterval::Week)
+    {
+        int wDay = now->tm_wday;
+        now->tm_mday -= wDay;
+        now->tm_hour = 4;
+    }
+    else if (timeInterval == TimeInterval::Month)
+    {
+        now->tm_mon--;
+        now->tm_mday = 1;
+        now->tm_hour = 4;
+    }
+    else if (timeInterval == TimeInterval::Year)
+    {
+        now->tm_year--;
+        now->tm_mon = 0;
+        now->tm_mday = 1;
+        now->tm_hour = 4;
+    }
+    std::mktime(now);
+    std::string year = std::to_string(now->tm_year - 100);
+    std::string mon = std::to_string(now->tm_mon + 1);
+    std::string day = std::to_string(now->tm_mday);
+    std::string hour = std::to_string(now->tm_hour);
+    if (year.size() == 1) year = "0" + year;
+    if (mon.size() == 1) mon = "0" + mon;
+    if (day.size() == 1) day = "0" + day;
+    if (hour.size() == 1) hour = "0" + hour;
+    assert(year.size() == 2 && mon.size() == 2 && day.size() == 2 && hour.size() == 2);
+    std::string cTime = year + ":" + mon + ":" + day + ":" + hour;
+
+    return cTime;
+}
+
+
 
 int getTrainingStatusBit(TrainingType trainType)
 {

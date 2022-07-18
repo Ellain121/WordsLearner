@@ -24,6 +24,9 @@ class StatisticsWidget : public QWidget
         void    setupWidgets();
         void    setupWidgetsConnections();
     
+    public slots:
+        void    wordUnlearned(QString learnedDate);
+    
     
     private:
         DatabaseManager*            mDBManager;

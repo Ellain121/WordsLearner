@@ -31,6 +31,7 @@ class DictionaryState : public QWidget, private NonCopyable
     
     signals:
         void        backToMenu();
+        void        fullyLearnedWordEliminated(QString learnedDate);
 
     private slots:
         void                searchWord();

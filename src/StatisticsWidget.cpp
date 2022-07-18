@@ -49,6 +49,21 @@ void StatisticsWidget::setupWidgetsConnections()
 
 }
 
+void StatisticsWidget::wordUnlearned(QString learnedDate)
+{
+    QString previousDayDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Day));
+    QString previousWeekDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Week));
+    QString previousMonthDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Month));
+    QString previousYearDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Year));
+    
+    if (compare(learnedDate, previousDayDate)) mDailyPrgBar->addValue(-1);
+    if (compare(learnedDate, previousWeekDate)) mWeeklyPrgBar->addValue(-1);
+    if (compare(learnedDate, previousMonthDate)) mMonthlyPrgBar->addValue(-1);
+    if (compare(learnedDate, previousYearDate)) mYearlyPrgBar->addValue(-1);
+    mPrgBarCont->writeChanges();
+    
+}
+
 void StatisticsWidget::updateStatistics(int newlyLearnedWordsCnt)
 {
     mDailyPrgBar->addValue(newlyLearnedWordsCnt);

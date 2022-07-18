@@ -54,6 +54,7 @@ enum TimeInterval
 
 std::string getCurrentTime();
 std::string getNextTimeIntervalStartDate(TimeInterval timeInterval);
+std::string getPreviousTimeIntervalStartDate(TimeInterval timeInterval);
 bool compare(const QString& str1, const QString& str2);
 
 struct SimpleWord

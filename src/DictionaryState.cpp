@@ -150,11 +150,19 @@ void DictionaryState::searchWord()
     mTableSortFilter->setFilterKeyColumn(0);
     mTableSortFilter->setFilterRegExp(filter);
 }
-
+#include <iostream>
 void DictionaryState::deleteWord()
 {
+
     TableButton* senderButton = qobject_cast<TableButton*>(sender());
     size_t row = senderButton->getRow();
+    QVariant status = mTableModel->data(mTableModel->index(row, 2));
+    std::cout << status.toInt() << std::endl;
+    if (status.toInt() == (int)TrainingType::All)
+    {
+        QString learnedDate = mTableModel->data(mTableModel->index(row, 4)).toString();
+        emit fullyLearnedWordEliminated(learnedDate);
+    }
 
     mTableSortFilter->removeRow(row);
     mTableModel->submitAll();
@@ -163,10 +171,20 @@ void DictionaryState::deleteWord()
 
 void DictionaryState::unlearnWord()
 {
+
     TableButton* senderButton = qobject_cast<TableButton*>(sender());
     size_t row = senderButton->getRow();
 
+    QVariant status = mTableModel->data(mTableModel->index(row, 2));
+    std::cout << status.toInt() << std::endl;
+    if (status.toInt() == (int)TrainingType::All)
+    {
+        QString learnedDate = mTableModel->data(mTableModel->index(row, 4)).toString();
+        emit fullyLearnedWordEliminated(learnedDate);
+    }
+
     mTableModel->setData(mTableModel->index(row, 2), 0);
+    mTableModel->setData(mTableModel->index(row, 4), 0);
 
     mTableModel->submitAll();
     setupButtons();

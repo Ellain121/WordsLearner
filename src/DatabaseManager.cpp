@@ -30,9 +30,9 @@ DatabaseManager::DatabaseManager()
             "Word VARCHAR(100), "
             "Translation TEXT, "
             "Status integer, "
-            "Added date VARCHAR(11), "
-            "Learned date VARCHAR(11), "
-            "Repetition time integer);";
+            "'Added date' VARCHAR(11), "
+            "'Learned date' VARCHAR(11), "
+            "'Repetition time' integer);";
 
     if (!query.exec(createTableCmd))
     {
@@ -51,10 +51,13 @@ DatabaseManager::~DatabaseManager()
 void DatabaseManager::writeChanges(const std::vector<Word>& words)
 {
     QSqlQuery update_statement(mDBConnection);
-    update_statement.prepare(QString("update " MAIN_TABLE_NAME " set Status=:newStatus WHERE Word=:word"));
+    update_statement.prepare(QString("update " MAIN_TABLE_NAME " set Status=:newStatus,'Learned date'=:learnedDate WHERE Word=:word"));
     for (auto& word : words)
     {
+        bool fullyLearned = word.status == (int)TrainingType::All;
+
         update_statement.bindValue(":newStatus", word.status);
+        update_statement.bindValue(":learnedDate", QString::fromStdString(fullyLearned? getCurrentTime() : "-"));
         update_statement.bindValue(":word", QString::fromStdString(word.word));
         if (!update_statement.exec())
         {
