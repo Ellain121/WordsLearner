@@ -95,8 +95,8 @@ void ProgressBarContainer::processChildrenResetDates()
     for (int i = 0; i < mChildren.size(); ++i)
     {
         auto& child = mChildren[i];
-
         // if reset required
+        std::cout << cDate.toStdString() << "  " << child->getResetDate().toStdString() << std::endl;
         if (compare(cDate, child->getResetDate()))
         {
             // std::cout << "Expired! " << getNameFromIndx(i).toStdString() << std::endl;

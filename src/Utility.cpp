@@ -7,8 +7,16 @@ std::string getCurrentTime()
 {
     std::time_t t = std::time(0);   // get time now
     std::tm* now = std::localtime(&t);
-    std::string cTime = std::to_string(now->tm_year - 100) + ":" + std::to_string(now->tm_mon + 1) + ":"
-            + std::to_string(now->tm_mday) + ":"  + std::to_string(now->tm_hour);
+    std::string year = std::to_string(now->tm_year - 100);
+    std::string mon = std::to_string(now->tm_mon + 1);
+    std::string day = std::to_string(now->tm_mday);
+    std::string hour = std::to_string(now->tm_hour);
+    if (year.size() == 1) year = "0" + year;
+    if (mon.size() == 1) mon = "0" + mon;
+    if (day.size() == 1) day = "0" + day;
+    if (hour.size() == 1) hour = "0" + hour;
+    assert(year.size() == 2 && mon.size() == 2 && day.size() == 2 && hour.size() == 2);
+    std::string cTime = year + ":" + mon + ":" + day + ":" + hour;
     return cTime;
 }
 
@@ -57,8 +65,16 @@ std::string getNextTimeIntervalStartDate(TimeInterval timeInterval)
         now->tm_hour = 4;
     }
     std::mktime(now);
-    std::string cTime = std::to_string(now->tm_year - 100) + ":" + std::to_string(now->tm_mon + 1) + ":"
-            + std::to_string(now->tm_mday) + ":"  + std::to_string(now->tm_hour);
+    std::string year = std::to_string(now->tm_year - 100);
+    std::string mon = std::to_string(now->tm_mon + 1);
+    std::string day = std::to_string(now->tm_mday);
+    std::string hour = std::to_string(now->tm_hour);
+    if (year.size() == 1) year = "0" + year;
+    if (mon.size() == 1) mon = "0" + mon;
+    if (day.size() == 1) day = "0" + day;
+    if (hour.size() == 1) hour = "0" + hour;
+    assert(year.size() == 2 && mon.size() == 2 && day.size() == 2 && hour.size() == 2);
+    std::string cTime = year + ":" + mon + ":" + day + ":" + hour;
 
     return cTime;
 }
