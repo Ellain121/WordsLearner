@@ -8,8 +8,6 @@
 #define DB_NAME "../data/status_bars.sqlite"
 #define TABLE_NAME "status_bars"
 
-#include <iostream>
-
 namespace
 {
 
@@ -55,7 +53,6 @@ ProgressBarContainer::ProgressBarContainer(const std::vector<ProgressBar*>& chil
     assert(cnt == 0 || cnt == 4);
     if (cnt == 0)
     {
-        std::cout << "COUNTER EQUAL ZERO!\n";
         QString initialInsertCmd = "INSERT INTO " TABLE_NAME " (Name, Counter, Cnt_Reset_Date, MaxValue) "
         "SELECT 'daily' AS 'Name', 0 AS 'Counter', '%1' as 'Cnt_Reset_Date', 10 as 'MaxValue' "
         "UNION ALL SELECT 'weekly', 0, '%2', 70 "
@@ -63,12 +60,10 @@ ProgressBarContainer::ProgressBarContainer(const std::vector<ProgressBar*>& chil
         "UNION ALL SELECT 'yearly', 0, '%4', 3650 ";
 
         initialInsertCmd = initialInsertCmd
-                    .arg(QString::fromStdString((getNextTimeIntervalStartDate(TimeInterval::Day))))
-                    .arg(QString::fromStdString((getNextTimeIntervalStartDate(TimeInterval::Week))))
-                    .arg(QString::fromStdString((getNextTimeIntervalStartDate(TimeInterval::Month))))
-                    .arg(QString::fromStdString((getNextTimeIntervalStartDate(TimeInterval::Year))));
-
-        std::cout << initialInsertCmd.toStdString() << std::endl;
+                    .arg(Time::getNextStartDateStr(TimeInterval::Day))
+                    .arg(Time::getNextStartDateStr(TimeInterval::Week))
+                    .arg(Time::getNextStartDateStr(TimeInterval::Month))
+                    .arg(Time::getNextStartDateStr(TimeInterval::Year));
         
         if (!query.exec(initialInsertCmd))
         {
@@ -91,16 +86,16 @@ ProgressBarContainer::~ProgressBarContainer()
 
 void ProgressBarContainer::processChildrenResetDates()
 {
-    QString cDate = QString::fromStdString(getCurrentTime());
+    QString cDate = Time::getCurrentTimeStr();
     for (int i = 0; i < mChildren.size(); ++i)
     {
         auto& child = mChildren[i];
         // if reset required
-        std::cout << cDate.toStdString() << "  " << child->getResetDate().toStdString() << std::endl;
-        if (compare(cDate, child->getResetDate()))
+        if (Time::compare(cDate, child->getResetDate()))
+        // if (cDate > child->getResetDate())
         {
             // std::cout << "Expired! " << getNameFromIndx(i).toStdString() << std::endl;
-            child->setResetDate(QString::fromStdString(getNextTimeIntervalStartDate( (TimeInterval)i )));
+            child->setResetDate(Time::getNextStartDateStr( (TimeInterval)i ));
             child->setVal(0);
             // std::cout << "newResetDate: " << getNextTimeIntervalStartDate( (TimeInterval)i ) << std::endl;
         }
@@ -149,7 +144,6 @@ void ProgressBarContainer::loadChildrenInfo()
         prgBar->setVal(cnt);
         prgBar->setResetDate(date);
         prgBar->setMaxValue(maxVal);
-        std::cout << cnt << " " << date.toStdString() << " " << maxVal << std::endl;
 
         ++i;
     }

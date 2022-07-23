@@ -73,15 +73,15 @@ void StatisticsWidget::wordDeletedOrReset(QString learnedDate, bool isFullyLearn
     mFullyLearnedWordsCnt--;
     updateLabels();
 
-    QString previousDayDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Day));
-    QString previousWeekDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Week));
-    QString previousMonthDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Month));
-    QString previousYearDate = QString::fromStdString(getPreviousTimeIntervalStartDate(TimeInterval::Year));
+    QString previousDayDate = Time::getPreviousStartDateStr(TimeInterval::Day);
+    QString previousWeekDate = Time::getPreviousStartDateStr(TimeInterval::Week);
+    QString previousMonthDate = Time::getPreviousStartDateStr(TimeInterval::Month);
+    QString previousYearDate = Time::getPreviousStartDateStr(TimeInterval::Year);
     
-    if (compare(learnedDate, previousDayDate)) mDailyPrgBar->addValue(-1);
-    if (compare(learnedDate, previousWeekDate)) mWeeklyPrgBar->addValue(-1);
-    if (compare(learnedDate, previousMonthDate)) mMonthlyPrgBar->addValue(-1);
-    if (compare(learnedDate, previousYearDate)) mYearlyPrgBar->addValue(-1);
+    if (Time::compare(learnedDate, previousDayDate)) mDailyPrgBar->addValue(-1);
+    if (Time::compare(learnedDate, previousWeekDate)) mWeeklyPrgBar->addValue(-1);
+    if (Time::compare(learnedDate, previousMonthDate)) mMonthlyPrgBar->addValue(-1);
+    if (Time::compare(learnedDate, previousYearDate)) mYearlyPrgBar->addValue(-1);
     mPrgBarCont->writeChanges();
     
 }

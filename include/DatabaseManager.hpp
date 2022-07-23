@@ -15,7 +15,6 @@ class DatabaseManager : private NonCopyable
         DatabaseManager();
         ~DatabaseManager();
 
-
         std::map<TrainingType, int>   getWordsAmountForEachTraining() const;
 
         std::vector<Word>       generateWordsForTraining(TrainingType trainType) const;
@@ -29,6 +28,9 @@ class DatabaseManager : private NonCopyable
         const std::string&          getTableName() const;
         int                         countFullyLearnedWords() const;
         int                         countWords() const;
+    
+    private:
+        void                updateWordsWithRepetitionDate();
         
     
     private:

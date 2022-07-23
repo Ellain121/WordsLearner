@@ -5,6 +5,7 @@
 #include "ChooseTranslation.hpp"
 #include "RainWord.hpp"
 #include "DictionaryState.hpp"
+#include "Repetition.hpp"
 
 #include <QFile>
 
@@ -67,6 +68,7 @@ void MainWindow::setupCoreWidgets()
 
 void MainWindow::setupCoreWidgetsConnections()
 {
+    connect(mRepetitionButton, &QPushButton::clicked, this, &MainWindow::initRepetitionTraining);
     connect(mInitialTrainingButton, &QPushButton::clicked, this, &MainWindow::initInitialTraining);
     connect(mMakeWordButton, &QPushButton::clicked, this, &MainWindow::initMakeWordTraining);
     connect(mChooseWordButton, &QPushButton::clicked, this, &MainWindow::initChooseWordTraining);
@@ -94,9 +96,28 @@ void MainWindow::updateButtonsText()
     mDictionaryButton->setText("Dictionary");
 }
 
+void MainWindow::initRepetitionTraining()
+{
+    mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::Repetition_Train);
+    if (mCurrentWordsToLearn.size() < 1) return;
+
+    Repetition* repetitionTrain = new Repetition(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::Repetition_Train));
+
+    connect(repetitionTrain, &Training::trainingDone, [&](){
+        // makeWord->getTrainingType();
+        this->activeTrainingDone(TrainingType::Repetition_Train);
+    });
+
+    connect(repetitionTrain, &Training::backToMenu, this, &MainWindow::activateMenu);
+
+    mMainStackedWidget->addWidget(repetitionTrain);
+    mMainStackedWidget->setCurrentIndex(1);
+}
+
 void MainWindow::initInitialTraining()
 {
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::Initial_Train);
+    if (mCurrentWordsToLearn.size() < 1) return;
 
     WordsWelcome* wordsWelcome = new WordsWelcome(mCurrentWordsToLearn);
     ChooseWord* chooseWord = new ChooseWord(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::ChooseWord_Train));
@@ -166,6 +187,7 @@ void MainWindow::initInitialTraining()
 void MainWindow::initMakeWordTraining()
 {
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::MakeWord_Train);
+    if (mCurrentWordsToLearn.size() < 1) return;
 
     MakeWord* makeWord = new MakeWord(mCurrentWordsToLearn);
 
@@ -183,6 +205,7 @@ void MainWindow::initMakeWordTraining()
 void MainWindow::initChooseWordTraining()
 {
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::ChooseWord_Train);
+    if (mCurrentWordsToLearn.size() < 1) return;
 
     ChooseWord* chooseWord = new ChooseWord(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::ChooseWord_Train));
 
@@ -198,6 +221,7 @@ void MainWindow::initChooseWordTraining()
 void MainWindow::initChooseTranslation()
 {
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::ChooseTranslation_Train);
+    if (mCurrentWordsToLearn.size() < 1) return;
 
     ChooseTranslation* chooseTranslation = new ChooseTranslation(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::ChooseTranslation_Train));
 
@@ -213,6 +237,7 @@ void MainWindow::initChooseTranslation()
 void MainWindow::initRainWord()
 {
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::RainWord_Train);
+    if (mCurrentWordsToLearn.size() < 1) return;
 
     RainWord* rainWord = new RainWord(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::RainWord_Train));
 
@@ -243,7 +268,12 @@ void MainWindow::activeTrainingDone(TrainingType trainType)
     int cnt = 0;
     for (auto& mCWTL : mCurrentWordsToLearn)
     {
-        cnt += mCWTL.status == TrainingType::All;
+        if (isFullyLearned(mCWTL.status))
+        {
+            mCWTL.status |= (0b1 << (int)getTrainingStatusBit(TrainingType::Repetition_Train));
+            cnt++;
+        }
+        
     }
 
     mDBManager.writeChanges(mCurrentWordsToLearn);

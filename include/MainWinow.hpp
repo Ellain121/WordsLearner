@@ -37,6 +37,7 @@ class MainWindow : public QMainWindow
         virtual void    closeEvent(QCloseEvent *event);
 
     private slots:
+        void        initRepetitionTraining();
         void        initInitialTraining();
         void        initMakeWordTraining();
         void        initChooseWordTraining();

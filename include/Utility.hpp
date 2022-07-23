@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <ctime>
 
 extern const int WINDOW_WIDTH;
 extern const int WINDOW_HEIGHT;
@@ -13,16 +14,19 @@ extern const int WINDOW_HEIGHT;
 enum TrainingType
 {
     Initial_Train = 0,
-    MakeWord_Train = 1,
-    ChooseWord_Train = 2,
-    ChooseTranslation_Train = 3,
-    RainWord_Train = 4,
+    MakeWord_Train,
+    ChooseWord_Train,
+    ChooseTranslation_Train ,
+    RainWord_Train ,
 
-    Repetition_Train = 1000,
+    Repetition_Train,
     WordsWelcome_Train = 1001,
 
-    All = 31,
+    All = (0b1 << Initial_Train) | (0b1 << MakeWord_Train) | (0b1 << ChooseWord_Train)
+            | (0b1 << ChooseTranslation_Train) | (0b1 << RainWord_Train),
 };
+
+bool isFullyLearned(int status);
 
 // enum TrainingType
 // {
@@ -52,10 +56,32 @@ enum TimeInterval
     Year = 3,
 };
 
-std::string getCurrentTime();
-std::string getNextTimeIntervalStartDate(TimeInterval timeInterval);
-std::string getPreviousTimeIntervalStartDate(TimeInterval timeInterval);
-bool compare(const QString& str1, const QString& str2);
+class Time
+{
+    public:
+            Time();
+            Time(const QString& strFormat);
+
+        bool    operator>(const Time& time);
+        void    operator+=(int hrs);
+
+        QString             getStr() const;
+
+        static Time         getCurrentTime();
+        static QString      getCurrentTimeStr();
+        static QString      getNextStartDateStr(TimeInterval timeInterval);
+        static QString      getPreviousStartDateStr(TimeInterval timeInterval);
+        static bool         compare(const QString& str1, const QString& str2);
+
+    private:
+        std::tm    time;
+};
+
+// std::string getCurrentTime();
+// std::string getNextTimeIntervalStartDate(TimeInterval timeInterval);
+// std::string getPreviousTimeIntervalStartDate(TimeInterval timeInterval);
+// QString addHoursToDate(QString date, int hours);
+// bool compare(const QString& str1, const QString& str2);
 
 struct SimpleWord
 {

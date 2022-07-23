@@ -129,7 +129,7 @@ void DictionaryState::addWord()
         mTableModel->setData(mTableModel->index(row, 0), word);
         mTableModel->setData(mTableModel->index(row, 1), translation);
         mTableModel->setData(mTableModel->index(row, 2), 0);
-        mTableModel->setData(mTableModel->index(row, 3), QString::fromStdString(getCurrentTime())); //added time
+        mTableModel->setData(mTableModel->index(row, 3), Time::getCurrentTimeStr()); //added time
         mTableModel->setData(mTableModel->index(row, 4), 0);
         mTableModel->setData(mTableModel->index(row, 5), 0);
         mTableModel->submitAll();
@@ -158,7 +158,7 @@ void DictionaryState::deleteWord()
     TableButton* senderButton = qobject_cast<TableButton*>(sender());
     size_t row = senderButton->getRow();
     QVariant status = mTableModel->data(mTableModel->index(row, 2));
-    if (status.toInt() == (int)TrainingType::All)
+    if (isFullyLearned(status.toInt()))
     {
         QString learnedDate = mTableModel->data(mTableModel->index(row, 4)).toString();
         // emit fullyLearnedwordDeletedOrReset(learnedDate, true);
@@ -181,7 +181,7 @@ void DictionaryState::unlearnWord()
     size_t row = senderButton->getRow();
 
     QVariant status = mTableModel->data(mTableModel->index(row, 2));
-    if (status.toInt() == (int)TrainingType::All)
+    if (isFullyLearned(status.toInt()))
     {
         QString learnedDate = mTableModel->data(mTableModel->index(row, 4)).toString();
         emit wordDeletedOrReset(learnedDate, true, false);

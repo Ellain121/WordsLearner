@@ -1,7 +1,5 @@
 #include "WrapButton.hpp"
 
-#include <iostream>
-
 namespace
 {
 

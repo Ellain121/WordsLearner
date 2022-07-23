@@ -1,27 +1,101 @@
 #include "Utility.hpp"
 
-#include <ctime>
 #include <cassert>
 
-std::string getCurrentTime()
+bool isFullyLearned(int status)
+{
+    int fullyLearnedStatus = (int)TrainingType::All;
+
+    int indx = 0;
+    while (fullyLearnedStatus & (0b1 << indx))
+    {
+        if ( !(status & (0b1 << indx)) )
+        {
+            return false;
+        }
+        ++indx;
+    }
+    return true;
+}
+
+Time::Time()
 {
     std::time_t t = std::time(0);   // get time now
-    std::tm* now = std::localtime(&t);
-    std::string year = std::to_string(now->tm_year - 100);
-    std::string mon = std::to_string(now->tm_mon + 1);
-    std::string day = std::to_string(now->tm_mday);
-    std::string hour = std::to_string(now->tm_hour);
+    time = *std::localtime(&t);
+}
+
+Time::Time(const QString& strFormat)
+{
+    assert(strFormat.size() == 11);
+    for (int i = 0; i < 11; ++i)
+    {
+        if ((i + 1) % 3 == 0)
+            assert(strFormat[i] == ':');
+    }
+    
+    std::string str = strFormat.toStdString();
+    int year    = (str[0] - '0')*10 + (str[1] - '0');
+    int mon     = (str[3] - '0')*10 + (str[4] - '0');
+    int day     = (str[6] - '0')*10 + (str[7] - '0');
+    int hour    = (str[9] - '0')*10 + (str[10] - '0');
+
+    std::tm time_in = { 0, 0, hour, // second, minute, hour
+        day, mon-1, year+100 }; // 1-based day, 0-based month, year since 1900
+    std::time_t t = std::mktime(&time_in);
+    time = *std::localtime(&t);
+}
+
+QString Time::getStr() const
+{
+    std::string year = std::to_string(time.tm_year - 100);
+    std::string mon = std::to_string(time.tm_mon + 1);
+    std::string day = std::to_string(time.tm_mday);
+    std::string hour = std::to_string(time.tm_hour);
     if (year.size() == 1) year = "0" + year;
     if (mon.size() == 1) mon = "0" + mon;
     if (day.size() == 1) day = "0" + day;
     if (hour.size() == 1) hour = "0" + hour;
-    assert(year.size() == 2 && mon.size() == 2 && day.size() == 2 && hour.size() == 2);
     std::string cTime = year + ":" + mon + ":" + day + ":" + hour;
-    return cTime;
+    assert(year.size() >= 2 && mon.size() == 2 && day.size() == 2 && hour.size() == 2);
+
+    return QString::fromStdString(cTime);
+}
+
+Time Time::getCurrentTime()
+{
+    return Time();
+}
+
+QString Time::getCurrentTimeStr()
+{
+    auto t = Time();
+    return t.getStr();
+}
+
+bool Time::operator>(const Time& t)
+{
+    // // yy-mm-dd-hh
+    // // 01-34-67-9A
+
+    std::string date_1 = getStr().toStdString();
+    std::string date_2 = t.getStr().toStdString();
+    
+    int i = 0;
+    while (i < 11 && date_1[i] == date_2[i])
+    {
+        i++;
+    }
+    return i >= 11 ? true : (date_1[i] > date_2[i]);
+}
+
+void Time::operator+=(int hrs)
+{
+    time.tm_hour += hrs;
+    std::mktime(&time);
 }
 
 // returns true if date1 >= date2
-bool compare(const QString& date1, const QString& date2)
+bool Time::compare(const QString& date1, const QString& date2)
 {
     // yy-mm-dd-hh
     // 01-34-67-9A
@@ -33,7 +107,28 @@ bool compare(const QString& date1, const QString& date2)
     return i >= 11 ? true : (date1[i] > date2[i]);
 }
 
-std::string getNextTimeIntervalStartDate(TimeInterval timeInterval)
+// QString addHoursToDate(QString date, int hours)
+// {
+//         std::tm time_in = { 0, 0, 0, // second, minute, hour
+//         9, 10, 2016 - 1900 }; // 1-based day, 0-based month, year since 1900
+//         std::time_t t = std::time(0);
+//         std::time_t time_temp = std::mktime(&time_in);
+
+//         //Note: Return value of localtime is not threadsafe, because it might be
+//         // (and will be) reused in subsequent calls to std::localtime!
+//         const std::tm * time_out = std::localtime(&t);
+
+//         //Sunday == 0, Monday == 1, and so on ...
+//         std::cout << "Today is this day of the week: " << time_out->tm_wday << "\n";
+//         std::cout << "(Sunday is 0, Monday is 1, and so on...)\n";
+
+//         // НАПИСАТЬ СТРУКТУРУ ВРЕМЕНИ КОТОРАЯ СМОЖЕТ ВОЗВРАЩАТЬ ВРЕМЯ В ФОРМАТЕ QString, И иметь в себе все
+//         // НУЖНЫЕ ФУНКЦИИ.
+//         // ПОСЛЕ ДОДЕЛАТЬ РЕПЕТИТИОН
+
+// }
+
+QString Time::getNextStartDateStr(TimeInterval timeInterval)
 {
     // yy-mm-dd-hh
     // 01-34-67-9A
@@ -76,10 +171,55 @@ std::string getNextTimeIntervalStartDate(TimeInterval timeInterval)
     assert(year.size() == 2 && mon.size() == 2 && day.size() == 2 && hour.size() == 2);
     std::string cTime = year + ":" + mon + ":" + day + ":" + hour;
 
-    return cTime;
+    return QString::fromStdString(cTime);
 }
 
-std::string getPreviousTimeIntervalStartDate(TimeInterval timeInterval)
+// std::string getNextTimeIntervalStartDate(TimeInterval timeInterval)
+// {
+//     // yy-mm-dd-hh
+//     // 01-34-67-9A
+//     std::time_t t = std::time(0);
+//     std::tm* now = std::localtime(&t);
+//     if (timeInterval == TimeInterval::Day)
+//     {
+//         now->tm_mday++;
+//         now->tm_hour = 4;
+//     }
+//     else if (timeInterval == TimeInterval::Week)
+//     {
+//         int wDay = now->tm_wday;
+//         int day_untill_end = 6 - wDay + 1;
+//         now->tm_mday += day_untill_end;
+//         now->tm_hour = 4;
+//     }
+//     else if (timeInterval == TimeInterval::Month)
+//     {
+//         now->tm_mon++;
+//         now->tm_mday = 1;
+//         now->tm_hour = 4;
+//     }
+//     else if (timeInterval == TimeInterval::Year)
+//     {
+//         now->tm_year++;
+//         now->tm_mon = 0;
+//         now->tm_mday = 1;
+//         now->tm_hour = 4;
+//     }
+//     std::mktime(now);
+//     std::string year = std::to_string(now->tm_year - 100);
+//     std::string mon = std::to_string(now->tm_mon + 1);
+//     std::string day = std::to_string(now->tm_mday);
+//     std::string hour = std::to_string(now->tm_hour);
+//     if (year.size() == 1) year = "0" + year;
+//     if (mon.size() == 1) mon = "0" + mon;
+//     if (day.size() == 1) day = "0" + day;
+//     if (hour.size() == 1) hour = "0" + hour;
+//     assert(year.size() == 2 && mon.size() == 2 && day.size() == 2 && hour.size() == 2);
+//     std::string cTime = year + ":" + mon + ":" + day + ":" + hour;
+
+//     return cTime;
+// }
+QString Time::getPreviousStartDateStr(TimeInterval timeInterval)
 {
     // yy-mm-dd-hh
     // 01-34-67-9A
@@ -121,8 +261,52 @@ std::string getPreviousTimeIntervalStartDate(TimeInterval timeInterval)
     assert(year.size() == 2 && mon.size() == 2 && day.size() == 2 && hour.size() == 2);
     std::string cTime = year + ":" + mon + ":" + day + ":" + hour;
 
-    return cTime;
+    return QString::fromStdString(cTime);
 }
+// std::string getPreviousTimeIntervalStartDate(TimeInterval timeInterval)
+// {
+//     // yy-mm-dd-hh
+//     // 01-34-67-9A
+//     std::time_t t = std::time(0);
+//     std::tm* now = std::localtime(&t);
+//     if (timeInterval == TimeInterval::Day)
+//     {
+//         now->tm_mday--;
+//         now->tm_hour = 4;
+//     }
+//     else if (timeInterval == TimeInterval::Week)
+//     {
+//         int wDay = now->tm_wday;
+//         now->tm_mday -= wDay;
+//         now->tm_hour = 4;
+//     }
+//     else if (timeInterval == TimeInterval::Month)
+//     {
+//         now->tm_mon--;
+//         now->tm_mday = 1;
+//         now->tm_hour = 4;
+//     }
+//     else if (timeInterval == TimeInterval::Year)
+//     {
+//         now->tm_year--;
+//         now->tm_mon = 0;
+//         now->tm_mday = 1;
+//         now->tm_hour = 4;
+//     }
+//     std::mktime(now);
+//     std::string year = std::to_string(now->tm_year - 100);
+//     std::string mon = std::to_string(now->tm_mon + 1);
+//     std::string day = std::to_string(now->tm_mday);
+//     std::string hour = std::to_string(now->tm_hour);
+//     if (year.size() == 1) year = "0" + year;
+//     if (mon.size() == 1) mon = "0" + mon;
+//     if (day.size() == 1) day = "0" + day;
+//     if (hour.size() == 1) hour = "0" + hour;
+//     assert(year.size() == 2 && mon.size() == 2 && day.size() == 2 && hour.size() == 2);
+//     std::string cTime = year + ":" + mon + ":" + day + ":" + hour;
+
+//     return cTime;
+// }
 
 
 
@@ -134,9 +318,11 @@ int getTrainingStatusBit(TrainingType trainType)
     if (trainType == TrainingType::ChooseWord_Train) return 2;
     if (trainType == TrainingType::ChooseTranslation_Train) return 3;
     if (trainType == TrainingType::RainWord_Train) return 4;
+    if (trainType == TrainingType::Repetition_Train) return (int)trainType;//TEMP DECISION ONLY
     assert(false);
 }
 
+// dont count repetition train
 std::vector<TrainingType> getRequiredTrainingsFromStatus(int statusBits)
 {
     std::vector<TrainingType> requiredTrainings;
