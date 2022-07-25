@@ -12,6 +12,7 @@ It's not necessary to use only English language. I, for one, use English for wor
 Though trainings are simple, I find them really helpful in learning new words.
 
 There are 6 trainings in total and only 4 real ones.
+
 1 - Repetition training. If you learned your word fully (passed all trainings). There will be a timer for 12 hours. After that time, repetition training will be available. If you pass it without mistakes. Your repetition time will be multiplied by 2(12h -> 24h -> 48h). If not, your word will be mark unlearned, and you will have to relearn it once again.
 
 2 - Initial Training. Actually it's just MakeWord, ChooseWord and ChooseTranslation trainings with one additional WordsWelcome.
