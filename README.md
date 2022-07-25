@@ -6,11 +6,7 @@ Written for Linux, but I think didn't use any OS specific libraries.
 
 Requirements: Qt5
 
-Installation: 
-
-  mkdir build
-  cmake ..
-  make
+Installation: Cmake
 
 It's not necessary to use only English language. I, for one, use English for words and my native for translation.
 Though trainings are simple, I find them really helpful in learning new words.
