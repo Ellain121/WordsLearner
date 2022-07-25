@@ -101,7 +101,9 @@ void MainWindow::initRepetitionTraining()
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::Repetition_Train);
     if (mCurrentWordsToLearn.size() < 1) return;
 
-    Repetition* repetitionTrain = new Repetition(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::Repetition_Train));
+    int trainBit = getTrainingStatusBit(TrainingType::Repetition_Train);
+    Repetition* repetitionTrain = new Repetition(mCurrentWordsToLearn, 
+        mDBManager.generateRandomWords(TrainingType::Repetition_Train), trainBit);
 
     connect(repetitionTrain, &Training::trainingDone, [&](){
         // makeWord->getTrainingType();
@@ -119,10 +121,17 @@ void MainWindow::initInitialTraining()
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::Initial_Train);
     if (mCurrentWordsToLearn.size() < 1) return;
 
-    WordsWelcome* wordsWelcome = new WordsWelcome(mCurrentWordsToLearn);
-    ChooseWord* chooseWord = new ChooseWord(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::ChooseWord_Train));
-    ChooseTranslation* chooseTranslation = new ChooseTranslation(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::ChooseTranslation_Train));
-    MakeWord* makeWord = new MakeWord(mCurrentWordsToLearn);
+    int trainBit_1 = getTrainingStatusBit(TrainingType::Initial_Train_1);
+    int trainBit_2 = getTrainingStatusBit(TrainingType::Initial_Train_2);
+    int trainBit_3 = getTrainingStatusBit(TrainingType::Initial_Train_3);
+    int trainBit_4 = getTrainingStatusBit(TrainingType::Initial_Train_4);
+
+    WordsWelcome* wordsWelcome = new WordsWelcome(mCurrentWordsToLearn, trainBit_1);
+    ChooseWord* chooseWord = new ChooseWord(mCurrentWordsToLearn, 
+            mDBManager.generateRandomWords(TrainingType::ChooseWord_Train), trainBit_2);
+    ChooseTranslation* chooseTranslation = new ChooseTranslation(mCurrentWordsToLearn, 
+            mDBManager.generateRandomWords(TrainingType::ChooseTranslation_Train), trainBit_3);
+    MakeWord* makeWord = new MakeWord(mCurrentWordsToLearn, trainBit_4);
 
     mMultiple.trains.resize(4);
     mMultiple.trains[0] = wordsWelcome;
@@ -189,7 +198,7 @@ void MainWindow::initMakeWordTraining()
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::MakeWord_Train);
     if (mCurrentWordsToLearn.size() < 1) return;
 
-    MakeWord* makeWord = new MakeWord(mCurrentWordsToLearn);
+    MakeWord* makeWord = new MakeWord(mCurrentWordsToLearn, getTrainingStatusBit(TrainingType::MakeWord_Train));
 
     connect(makeWord, &Training::trainingDone, [&](){
         // makeWord->getTrainingType();
@@ -207,7 +216,8 @@ void MainWindow::initChooseWordTraining()
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::ChooseWord_Train);
     if (mCurrentWordsToLearn.size() < 1) return;
 
-    ChooseWord* chooseWord = new ChooseWord(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::ChooseWord_Train));
+    ChooseWord* chooseWord = new ChooseWord(mCurrentWordsToLearn, 
+        mDBManager.generateRandomWords(TrainingType::ChooseWord_Train), getTrainingStatusBit(TrainingType::ChooseWord_Train));
 
     connect(chooseWord, &Training::trainingDone, [&](){
         this->activeTrainingDone(TrainingType::ChooseWord_Train);
@@ -223,7 +233,8 @@ void MainWindow::initChooseTranslation()
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::ChooseTranslation_Train);
     if (mCurrentWordsToLearn.size() < 1) return;
 
-    ChooseTranslation* chooseTranslation = new ChooseTranslation(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::ChooseTranslation_Train));
+    ChooseTranslation* chooseTranslation = new ChooseTranslation(mCurrentWordsToLearn, 
+        mDBManager.generateRandomWords(TrainingType::ChooseTranslation_Train), getTrainingStatusBit(TrainingType::ChooseTranslation_Train));
 
     connect(chooseTranslation, &Training::trainingDone, [&](){
         this->activeTrainingDone(TrainingType::ChooseTranslation_Train);
@@ -239,7 +250,8 @@ void MainWindow::initRainWord()
     mCurrentWordsToLearn = mDBManager.generateWordsForTraining(TrainingType::RainWord_Train);
     if (mCurrentWordsToLearn.size() < 1) return;
 
-    RainWord* rainWord = new RainWord(mCurrentWordsToLearn, mDBManager.generateRandomWords(TrainingType::RainWord_Train));
+    RainWord* rainWord = new RainWord(mCurrentWordsToLearn, 
+        mDBManager.generateRandomWords(TrainingType::RainWord_Train), getTrainingStatusBit(TrainingType::RainWord_Train));
 
     connect(rainWord, &Training::trainingDone, [&](){
         this->activeTrainingDone(TrainingType::RainWord_Train);

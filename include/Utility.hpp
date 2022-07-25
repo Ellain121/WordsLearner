@@ -14,15 +14,21 @@ extern const int WINDOW_HEIGHT;
 enum TrainingType
 {
     Initial_Train = 0,
+    Initial_Train_1 = 0,
+    Initial_Train_2,
+    Initial_Train_3,
+    Initial_Train_4,
     MakeWord_Train,
     ChooseWord_Train,
     ChooseTranslation_Train ,
     RainWord_Train ,
+    TrainCnt,
 
     Repetition_Train,
     WordsWelcome_Train = 1001,
 
-    All = (0b1 << Initial_Train) | (0b1 << MakeWord_Train) | (0b1 << ChooseWord_Train)
+    All = (0b1 << Initial_Train_1) | (0b1 << Initial_Train_2) | (0b1 << Initial_Train_3) 
+            | (0b1 << Initial_Train_4) | (0b1 << MakeWord_Train) | (0b1 << ChooseWord_Train)
             | (0b1 << ChooseTranslation_Train) | (0b1 << RainWord_Train),
 };
 

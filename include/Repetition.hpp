@@ -17,7 +17,7 @@ class Repetition : public Training
     Q_OBJECT
 
     public:
-        Repetition(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, QWidget* parent = 0);
+        Repetition(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, int trainingBit, QWidget* parent = 0);
 
         TrainingType    getTrainingType() const;
 

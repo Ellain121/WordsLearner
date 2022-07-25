@@ -16,7 +16,7 @@ class WordsWelcome : public Training
     Q_OBJECT
 
     public:
-        WordsWelcome(std::vector<Word>& words, QWidget* parent = 0);
+        WordsWelcome(std::vector<Word>& words, int trainingBit, QWidget* parent = 0);
 
         TrainingType    getTrainingType() const;
     

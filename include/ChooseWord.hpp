@@ -16,7 +16,7 @@ class ChooseWord : public Training
     Q_OBJECT
 
     public:
-        ChooseWord(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, QWidget* parent = 0);
+        ChooseWord(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, int trainingBit, QWidget* parent = 0);
 
         TrainingType    getTrainingType() const;
     

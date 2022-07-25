@@ -5,8 +5,8 @@
 
 #include <cassert>
 
-MakeWord::MakeWord(std::vector<Word>& words, QWidget* parent)
-: Training(words, getTrainingStatusBit(TrainingType::MakeWord_Train), parent)
+MakeWord::MakeWord(std::vector<Word>& words, int trainingBit, QWidget* parent)
+: Training(words, trainingBit, parent)
 , mLetterIndx(0)
 , mWordMistakesCnt(0)
 {

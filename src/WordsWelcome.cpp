@@ -4,8 +4,8 @@
 
 #include <cassert>
 
-WordsWelcome::WordsWelcome(std::vector<Word>& words, QWidget* parent)
-: Training(words, 0, parent)
+WordsWelcome::WordsWelcome(std::vector<Word>& words, int trainingBit, QWidget* parent)
+: Training(words, trainingBit, parent)
 {
     assert(!mWords.empty());
 

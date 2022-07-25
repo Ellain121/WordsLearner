@@ -4,8 +4,8 @@
 
 #include <cassert>
 
-Repetition::Repetition(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, QWidget* parent)
-: Training(words, getTrainingStatusBit(TrainingType::Repetition_Train), parent)
+Repetition::Repetition(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, int trainingBit, QWidget* parent)
+: Training(words, trainingBit, parent)
 , mSimpleWords(simpleWords)
 , mSimpleWordsIndx(0)
 {

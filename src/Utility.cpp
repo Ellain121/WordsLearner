@@ -313,20 +313,21 @@ QString Time::getPreviousStartDateStr(TimeInterval timeInterval)
 int getTrainingStatusBit(TrainingType trainType)
 {
     // return (int)trainType;
-    if (trainType == TrainingType::Initial_Train) return 0;
-    if (trainType == TrainingType::MakeWord_Train) return 1;
-    if (trainType == TrainingType::ChooseWord_Train) return 2;
-    if (trainType == TrainingType::ChooseTranslation_Train) return 3;
-    if (trainType == TrainingType::RainWord_Train) return 4;
-    if (trainType == TrainingType::Repetition_Train) return (int)trainType;//TEMP DECISION ONLY
-    assert(false);
+    return (int)trainType;
+    // if (trainType == TrainingType::Initial_Train) return 0;
+    // if (trainType == TrainingType::MakeWord_Train) return 1;
+    // if (trainType == TrainingType::ChooseWord_Train) return 2;
+    // if (trainType == TrainingType::ChooseTranslation_Train) return 3;
+    // if (trainType == TrainingType::RainWord_Train) return 4;
+    // if (trainType == TrainingType::Repetition_Train) return (int)trainType;//TEMP DECISION ONLY
+    // assert(false);
 }
 
 // dont count repetition train
 std::vector<TrainingType> getRequiredTrainingsFromStatus(int statusBits)
 {
     std::vector<TrainingType> requiredTrainings;
-    for (int i = 0; i <= 4; ++i)
+    for (int i = 0; i <= (int)TrainingType::TrainCnt; ++i)
     {
         if ( (statusBits & (0b1 << i)) == 0)
         {

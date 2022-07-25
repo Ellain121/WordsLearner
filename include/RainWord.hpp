@@ -15,7 +15,7 @@ class RainWord : public Training
     Q_OBJECT
 
     public:
-        RainWord(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, QWidget* parent = 0);
+        RainWord(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, int trainingBit, QWidget* parent = 0);
 
         TrainingType    getTrainingType() const;
     

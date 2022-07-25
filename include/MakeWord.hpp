@@ -18,7 +18,7 @@ class MakeWord : public Training
     Q_OBJECT
 
     public:
-        MakeWord(std::vector<Word>& words, QWidget* parent = 0);
+        MakeWord(std::vector<Word>& words, int trainingBit, QWidget* parent = 0);
 
         virtual TrainingType    getTrainingType() const;
 

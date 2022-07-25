@@ -16,7 +16,8 @@ class ChooseTranslation : public Training
     Q_OBJECT
 
     public:
-        ChooseTranslation(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, QWidget* parent = 0);
+        ChooseTranslation(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords,
+                int trainingBit, QWidget* parent = 0);
 
         TrainingType    getTrainingType() const;
     

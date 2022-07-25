@@ -4,8 +4,8 @@
 
 #include <cassert>
 
-ChooseWord::ChooseWord(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, QWidget* parent)
-: Training(words, getTrainingStatusBit(TrainingType::ChooseWord_Train), parent)
+ChooseWord::ChooseWord(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, int trainingBit, QWidget* parent)
+: Training(words, trainingBit, parent)
 , mSimpleWords(simpleWords)
 , mSimpleWordsIndx(0)
 {

@@ -4,12 +4,14 @@
 
 #include <cassert>
 
-ChooseTranslation::ChooseTranslation(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, QWidget* parent)
-: Training(words, getTrainingStatusBit(TrainingType::ChooseTranslation_Train), parent)
+ChooseTranslation::ChooseTranslation(std::vector<Word>& words, std::vector<SimpleWord>&& simpleWords, 
+                int trainingBit, QWidget* parent)
+: Training(words, trainingBit, parent)
 , mSimpleWords(simpleWords)
 , mSimpleWordsIndx(0)
 {
     assert(!mWords.empty());
+    if (trainingBit == -1) trainingBit = getTrainingStatusBit(TrainingType::ChooseTranslation_Train);
 
     setupCoreWidgets();
     setupCoreWidgetsConnections();
