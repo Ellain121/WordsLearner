@@ -5,7 +5,9 @@ If you want me to add new feature, or ask something, feel free to pm me.
 Written for Linux, but I think didn't use any OS specific libraries.
 
 Requirements: Qt5
+
 Installation: 
+
   mkdir build
   cmake ..
   make
