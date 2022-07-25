@@ -1,5 +1,4 @@
-# WordsLearner
-Words Learner v0.1
+# WordsLearner v0.1
 App for learning new words(C++, Qt, SQLite)
 App is far from perfect and still developing. But It's already usable. 
 If you want me to add new feature, or ask something, feel free to pm me.
